@@ -21,7 +21,7 @@ public class ApplicationServer {
     }
 
 
-    public void start(Map<String, String> env) throws IOException, InterruptedException {
+    public void start(Map<String, String> env) throws IOException {
         ProcessBuilder processBuilder = new ProcessBuilder()
             .command("java", "-jar", jarPath)
             .inheritIO();
@@ -32,12 +32,15 @@ public class ApplicationServer {
         serverProcess = processBuilder.start();
     }
 
-    public void startWithDatabaseName(String dbName) throws IOException, InterruptedException {
+    public void startWithDatabaseName(String dbName) throws IOException {
         String dbUrl = "jdbc:mysql://localhost:3306/" + dbName + "?useSSL=false&useTimezone=true&serverTimezone=UTC&useLegacyDatetimeCode=false";
 
         start(envMapBuilder()
             .put("SPRING_DATASOURCE_URL", dbUrl)
-            .put("REGISTRATION_SERVER_ENDPOINT", "http://localhost:8883")
+            //.put("REGISTRATION_SERVER_ENDPOINT", "http://localhost:8883")
+            .put("EUREKA_CLIENT_ENABLED", "false")
+            .put("RIBBON_EUREKA_ENABLED", "false")
+            .put("REGISTRATION_SERVER_RIBBON_LISTOFSERVERS", "http://localhost:8883")
             .build()
         );
     }
